@@ -1,13 +1,12 @@
 package org.canert;
 
 import java.util.Objects;
-import java.util.Optional;
 
 public class Person {
     private String myTitle;
     private String myName;
     private String mySurname;
-    private Optional<Integer> myAge;
+    private Integer myAge;
 
     public String getTitle() {
         return myTitle;
@@ -33,12 +32,17 @@ public class Person {
         mySurname = surname;
     }
 
-    public Optional<Integer> getAge() {
+    public Integer getAge() {
         return myAge;
     }
 
-    public void setAge( Optional<Integer> age ) {
+    public void setAge( Integer age ) {
         myAge = age;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash( myTitle, myName, mySurname, myAge );
     }
 
     @Override
@@ -49,16 +53,11 @@ public class Person {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash( myTitle, myName, mySurname, myAge );
-    }
-
-    @Override
     public String toString() {
         // I hope that's ok...
         return "Title=" + myTitle +
                 ", Name=" + myName +
-                ", Age=" + ( myAge.isPresent() ? myAge.get() : " " );
+                ", Age=" + (myAge != null ? myAge : "<missing>");
     }
 }
 

@@ -10,6 +10,7 @@ import static java.util.stream.Collectors.groupingBy;
 public class PersonService {
 
     private final static String MY_PREFIX = "Mr.";
+    private final static String MY_NAME_PREFIX = "Pan";
 
     public static void main( String[] args ) {
         PersonService m = new PersonService();
@@ -20,7 +21,7 @@ public class PersonService {
         // 3.
         m.groupByTitle( people );
         // 4.
-        m.mergeTwoPeopleLists(people, people);
+        m.mergeTwoPeopleLists( people, people );
     }
 
     public List<Person> generateTwelvePeople() {
@@ -34,57 +35,56 @@ public class PersonService {
             person.setSurname( faker.name().lastName() );
             // setting age for first seven people
             if (i < 7) {
-                person.setAge( Optional.of(  random.nextInt(80) + 20 ) );
+                person.setAge( random.nextInt( 80 ) + 20 );
             } else {
-                person.setAge( Optional.empty() );
+                person.setAge( null );
             }
             peopleList.add( person );
         }
         return peopleList;
     }
 
-    public List<Person> printThreeOldestPeople( Collection<Person> people) {
+    public List<Person> printThreeOldestPeople( Collection<Person> people ) {
         if (people == null) {
-            System.out.println("no valid people list provided");
+            System.out.println( "no valid people list provided" );
             return null;
         }
 
         // sorting by age
         List<Person> sortedPeopleByAgeDescAndLimited = people.stream().sorted( Comparator.comparing( o1 -> {
-            Person p1 = (Person) o1;
-            if (p1.getAge().isPresent()) {
-                return p1.getAge().get();
-            } else {
-                return 0;
+            {
+                Person p1 = (Person) o1;
+                return p1.getAge() != null ? p1.getAge() : 0;
             }
         } ).reversed() ).limit( 3 ).toList();
 
         // printing
-        sortedPeopleByAgeDescAndLimited.forEach( p -> System.out.println(p.toString() ) );
+        sortedPeopleByAgeDescAndLimited.forEach( p -> System.out.println( p.toString() ) );
 
         return sortedPeopleByAgeDescAndLimited;
     }
 
-    public Map<String, List<Person>> groupByTitle(Collection<Person> people) {
+    public Map<String, List<Person>> groupByTitle( Collection<Person> people ) {
         if (people == null) {
-            System.out.println("no valid people list provided");
+            System.out.println( "no valid people list provided" );
             return null;
         }
 
         // grouping
-        Map<String, List<Person>> groupedPeople = people.stream().collect( groupingBy(Person::getTitle) );
+        Map<String, List<Person>> groupedPeople = people.stream().collect( groupingBy( Person::getTitle ) );
 
         // printing
         groupedPeople.values()
-                .forEach( v -> System.out.println(v.getFirst().getTitle() + " group size = " + v.size()) );
+                .forEach( v -> System.out.println( v.getFirst().getTitle() + " group size = " + v.size() ) );
 
-        // modifying
-        groupedPeople.get( MY_PREFIX ).forEach( p -> p.setName( "Pan " + p.getName() ) );
+        // modifying + printing changes again
+        groupedPeople.get( MY_PREFIX ).forEach( p -> p.setName( MY_NAME_PREFIX + " " + p.getName() ) );
+        groupedPeople.get( MY_PREFIX ).forEach( p -> System.out.println( p.toString() ));
 
         return groupedPeople;
     }
 
-    public List<Person> mergeTwoPeopleLists(Collection<Person> list1, Collection<Person> list2) {
+    public List<Person> mergeTwoPeopleLists( Collection<Person> list1, Collection<Person> list2 ) {
         return Stream.concat( list1.stream(), list2.stream() ).distinct().toList();
     }
 }
